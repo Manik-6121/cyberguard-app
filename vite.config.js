@@ -67,5 +67,6 @@ function historyBackendPlugin() {
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/cyberguard-app/',
   plugins: [react(), historyBackendPlugin()],
 })

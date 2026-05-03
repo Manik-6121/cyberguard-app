@@ -55,14 +55,34 @@ function App() {
         setIsLoading(false);
       })
       .catch(err => {
-        console.error("Failed to load history from backend", err);
-        const fallbackSession = {
+        console.error("Failed to load history from backend, falling back to localStorage", err);
+        let loadedSessions = [];
+        try {
+          const localData = localStorage.getItem('cyberguard_history');
+          if (localData) {
+            loadedSessions = JSON.parse(localData);
+          }
+        } catch(e) {
+          console.error("Failed to parse localStorage data", e);
+        }
+
+        const newSession = {
           id: Date.now().toString(),
           title: 'New Chat',
           messages: [DEFAULT_MESSAGE]
         };
-        setSessions([fallbackSession]);
-        setActiveSessionId(fallbackSession.id);
+        
+        let initialSessions = [newSession];
+        if (Array.isArray(loadedSessions) && loadedSessions.length > 0) {
+           if (loadedSessions[0].title === 'New Chat' && loadedSessions[0].messages.length === 1) {
+             initialSessions = loadedSessions;
+           } else {
+             initialSessions = [newSession, ...loadedSessions];
+           }
+        }
+        
+        setSessions(initialSessions);
+        setActiveSessionId(initialSessions[0].id);
         setIsLoading(false);
       });
   }, []);
@@ -74,11 +94,20 @@ function App() {
    * @param {Array} data - The full array of chat sessions to save
    */
   const saveToBackend = (data) => {
+    // Always save to localStorage as a backup for static hosting
+    try {
+      localStorage.setItem('cyberguard_history', JSON.stringify(data));
+    } catch(e) {
+      console.error("Failed to save to localStorage", e);
+    }
+
     fetch('/api/history', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
-    }).catch(err => console.error("Failed to save history to backend", err));
+    }).catch(err => {
+      // Swallowing the error since we saved to localStorage successfully
+    });
   };
 
   /**
