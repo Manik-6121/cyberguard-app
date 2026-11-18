@@ -8,7 +8,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    ignores: ['vite.config.js', 'test_models.js'],
+    ignores: ['vite.config.js', 'test_models.js', 'api/**/*.js', 'lib/**/*.js'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -20,7 +20,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['vite.config.js', 'test_models.js'],
+    files: ['vite.config.js', 'test_models.js', 'api/**/*.js', 'lib/**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: {
       globals: globals.node,

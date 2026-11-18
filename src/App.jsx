@@ -40,6 +40,21 @@ function App() {
         return text ? JSON.parse(text) : [];
       })
       .then(loadedSessions => {
+        let sessionsToLoad = Array.isArray(loadedSessions) ? loadedSessions : [];
+        if (sessionsToLoad.length === 0) {
+          try {
+            const localData = localStorage.getItem('cyberguard_history');
+            if (localData) {
+              const parsed = JSON.parse(localData);
+              if (Array.isArray(parsed)) {
+                sessionsToLoad = parsed;
+              }
+            }
+          } catch (e) {
+            console.error("Failed to parse localStorage data", e);
+          }
+        }
+
         const newSession = {
           id: Date.now().toString(),
           title: 'New Chat',
@@ -47,12 +62,12 @@ function App() {
         };
         
         let initialSessions = [newSession];
-        if (Array.isArray(loadedSessions) && loadedSessions.length > 0) {
+        if (sessionsToLoad.length > 0) {
            // Reuse existing empty new chat if it exists at the top
-           if (loadedSessions[0].title === 'New Chat' && loadedSessions[0].messages.length === 1) {
-             initialSessions = loadedSessions;
+           if (sessionsToLoad[0].title === 'New Chat' && sessionsToLoad[0].messages.length === 1) {
+             initialSessions = sessionsToLoad;
            } else {
-             initialSessions = [newSession, ...loadedSessions];
+             initialSessions = [newSession, ...sessionsToLoad];
            }
         }
         
