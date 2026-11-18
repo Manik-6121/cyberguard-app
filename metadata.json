@@ -1,0 +1,8 @@
+{
+  "name": "CyberGuard AI",
+  "description": "Digital Rights & Cyber-Legal Assistant specializing in Indian Cyber Law, Global Data Privacy, and Digital Security Best Practices.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -32,7 +32,13 @@ function App() {
    */
   useEffect(() => {
     fetch('/api/history')
-      .then(res => res.json())
+      .then(async res => {
+        if (!res.ok) {
+          throw new Error(`History endpoint returned ${res.status}`);
+        }
+        const text = await res.text();
+        return text ? JSON.parse(text) : [];
+      })
       .then(loadedSessions => {
         const newSession = {
           id: Date.now().toString(),
@@ -105,7 +111,7 @@ function App() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
-    }).catch(err => {
+    }).catch(() => {
       // Swallowing the error since we saved to localStorage successfully
     });
   };
